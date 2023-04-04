@@ -1,4 +1,5 @@
-install-dev:
-	@echo "Installing development dependencies..."
-	@pip install -e .
-	@echo "Keystone installed in development mode."
+source_keystone:
+	source cmd.multipass.prepare_env.sh
+
+multipass_start_env:
+	@start_env
