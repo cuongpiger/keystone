@@ -75,6 +75,7 @@ def _get_config_files(env=None):
     if env is None:
         env = os.environ
 
+
     dirname = env.get('OS_KEYSTONE_CONFIG_DIR', '').strip()
 
     files = [s.strip() for s in
