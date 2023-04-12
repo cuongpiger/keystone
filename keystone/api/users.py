@@ -20,7 +20,7 @@ import flask
 import http.client
 from oslo_serialization import jsonutils
 from werkzeug import exceptions
-from osprofiler import profiler
+from osprofiler import profiler, notifier
 
 from keystone.api._shared import json_home_relations
 from keystone.application_credential import schema as app_cred_schema
@@ -35,7 +35,6 @@ from keystone.i18n import _
 from keystone.identity import schema
 from keystone import notifications
 from keystone.server import flask as ks_flask
-
 
 CRED_TYPE_EC2 = 'ec2'
 CONF = keystone.conf.CONF
@@ -65,7 +64,6 @@ def _convert_v3_to_ec2_credential(credential):
 
 
 def _format_token_entity(entity):
-
     formatted_entity = entity.copy()
     access_token_id = formatted_entity['id']
     user_id = formatted_entity.get('authorizing_user_id', '')
@@ -279,6 +277,9 @@ class UserResource(ks_flask.ResourceBase):
         )
         PROVIDERS.identity_api.delete_user(user_id)
         return None, http.client.NO_CONTENT
+
+
+notifier.set(UserResource.get)
 
 
 class UserChangePasswordResource(ks_flask.ResourceBase):
@@ -507,11 +508,11 @@ class OAuth1AccessTokenCRUDResource(_OAuth1ResourceBase):
             build_target=_build_enforcer_target_data_owner_and_user_id_match)
         access_token = PROVIDERS.oauth_api.get_access_token(access_token_id)
         reason = (
-            'Invalidating the token cache because an access token for '
-            'consumer %(consumer_id)s has been deleted. Authorization for '
-            'users with OAuth tokens will be recalculated and enforced '
-            'accordingly the next time they authenticate or validate a '
-            'token.' % {'consumer_id': access_token['consumer_id']}
+                'Invalidating the token cache because an access token for '
+                'consumer %(consumer_id)s has been deleted. Authorization for '
+                'users with OAuth tokens will be recalculated and enforced '
+                'accordingly the next time they authenticate or validate a '
+                'token.' % {'consumer_id': access_token['consumer_id']}
         )
         notifications.invalidate_token_cache_notification(reason)
         PROVIDERS.oauth_api.delete_access_token(
