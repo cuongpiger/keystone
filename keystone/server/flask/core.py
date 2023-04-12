@@ -109,6 +109,7 @@ def setup_app_middleware(app):
     # Apply internal-only Middleware (e.g. AuthContextMiddleware). These
     # are below all externally loaded middleware in request processing.
     for mw in reversed(IMW):
+        print("middleware is: ", mw)
         app.wsgi_app = mw(app.wsgi_app)
 
     # Apply the middleware to the application.

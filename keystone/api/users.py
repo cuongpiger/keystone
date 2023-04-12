@@ -173,6 +173,7 @@ class UserResource(ks_flask.ResourceBase):
         api='identity_api', method='get_user')
 
     def get(self, user_id=None):
+        print("❤️ lIST USER HERE")
         """Get a user resource or list users.
 
         GET/HEAD /v3/users
