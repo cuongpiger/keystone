@@ -167,7 +167,7 @@ def _format_role_entity(role_id):
     return formatted_entity
 
 
-@profiler.trace_cls("point_name", info={"class": "UserResource"}, hide_args=False, trace_private=False)
+# @profiler.trace_cls("point_name", info={"class": "UserResource"}, hide_args=False, trace_private=False)
 class UserResource(ks_flask.ResourceBase):
     collection_key = 'users'
     member_key = 'user'
@@ -175,6 +175,8 @@ class UserResource(ks_flask.ResourceBase):
         api='identity_api', method='get_user')
 
     def get(self, user_id=None):
+        with profiler.Trace("UserResource",
+                            info={"method": "List all users"}):
         print("❤️ lIST USER HERE")
         """Get a user resource or list users.
 
