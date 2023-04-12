@@ -177,7 +177,7 @@ class UserResource(ks_flask.ResourceBase):
     def get(self, user_id=None):
         with profiler.Trace("UserResource",
                             info={"method": "List all users"}):
-            print("❤️ lIST USER HERE")
+            print("❤️ LIST USER HERE")
             """Get a user resource or list users.
     
             GET/HEAD /v3/users
