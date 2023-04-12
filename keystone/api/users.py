@@ -46,6 +46,7 @@ ACCESS_TOKEN_ID_PARAMETER_RELATION = (
         parameter_name='access_token_id')
 )
 
+profiler.init("SECRET_KEY",  base_id='sadfsdafasdfasdfas', parent_id='dsafafasdfsadf')
 
 def _convert_v3_to_ec2_credential(credential):
     # Prior to bug #1259584 fix, blob was stored unserialized
