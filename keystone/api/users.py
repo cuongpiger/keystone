@@ -20,6 +20,7 @@ import flask
 import http.client
 from oslo_serialization import jsonutils
 from werkzeug import exceptions
+from osprofiler import profiler
 
 from keystone.api._shared import json_home_relations
 from keystone.application_credential import schema as app_cred_schema
@@ -166,6 +167,7 @@ def _format_role_entity(role_id):
     return formatted_entity
 
 
+@profiler.trace_cls("point_name", info={"class": "UserResource"}, hide_args=False, trace_private=False)
 class UserResource(ks_flask.ResourceBase):
     collection_key = 'users'
     member_key = 'user'
