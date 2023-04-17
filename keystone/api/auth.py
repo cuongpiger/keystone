@@ -270,6 +270,7 @@ class AuthTokenOSPKIResource(flask_restful.Resource):
 
 class AuthTokenResource(_AuthFederationWebSSOBase):
     def get(self):
+        print("❤️ get token resource")
         """Validate a token.
 
         HEAD/GET /v3/auth/tokens
@@ -309,6 +310,7 @@ class AuthTokenResource(_AuthFederationWebSSOBase):
 
         POST /v3/auth/tokens
         """
+        print("❤️ post token resource")
         include_catalog = 'nocatalog' not in flask.request.args
         auth_data = self.request_body_json.get('auth')
         auth_schema.validate_issue_token_auth(auth_data)

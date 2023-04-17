@@ -172,7 +172,6 @@ class UserResource(ks_flask.ResourceBase):
         api='identity_api', method='get_user')
 
     def get(self, user_id=None):
-        profiler.init("SECRET_KEY", base_id='sadfsdafasdfasdfas', parent_id='dsafafasdfsadf')
         with profiler.Trace("UserResource",
                             info={"method": "List all users"}):
             print("❤️ LIST USER HERE")

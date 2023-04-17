@@ -577,7 +577,7 @@ class _AttributeRaisesError(object):
     # create a @classproperty style function. We use __get__ to raise the
     # exception.
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.__msg = 'PROGRAMMING ERROR: `self.{name}` is not set.'.format(
             name=name)
 
