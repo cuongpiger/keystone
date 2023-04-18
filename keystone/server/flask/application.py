@@ -38,6 +38,7 @@ LOG = log.getLogger(__name__)
 
 def fail_gracefully(f):
     """Log exceptions and aborts."""
+
     @functools.wraps(f)
     def wrapper(*args, **kw):
         try:
@@ -126,7 +127,7 @@ def _handle_unknown_keystone_exception(error):
 
 
 @fail_gracefully
-def application_factory(name='public'):
+def application_factory(name='public') -> flask.Flask:
     if name not in ('admin', 'public'):
         raise RuntimeError('Application name (for base_url lookup) must be '
                            'either `admin` or `public`.')

@@ -20,7 +20,6 @@ import flask
 import http.client
 from oslo_serialization import jsonutils
 from werkzeug import exceptions
-from osprofiler import profiler, notifier
 
 from keystone.api._shared import json_home_relations
 from keystone.application_credential import schema as app_cred_schema
@@ -45,6 +44,7 @@ ACCESS_TOKEN_ID_PARAMETER_RELATION = (
     json_home_relations.os_oauth1_parameter_rel_func(
         parameter_name='access_token_id')
 )
+
 
 def _convert_v3_to_ec2_credential(credential):
     # Prior to bug #1259584 fix, blob was stored unserialized
@@ -172,17 +172,14 @@ class UserResource(ks_flask.ResourceBase):
         api='identity_api', method='get_user')
 
     def get(self, user_id=None):
-        with profiler.Trace("UserResource",
-                            info={"method": "List all users"}):
-            print("❤️ LIST USER HERE")
-            """Get a user resource or list users.
-    
-            GET/HEAD /v3/users
-            GET/HEAD /v3/users/{user_id}
-            """
-            if user_id is not None:
-                return self._get_user(user_id)
-            return self._list_users()
+        """Get a user resource or list users.
+
+        GET/HEAD /v3/users
+        GET/HEAD /v3/users/{user_id}
+        """
+        if user_id is not None:
+            return self._get_user(user_id)
+        return self._list_users()
 
     def _get_user(self, user_id):
         """Get a user resource.
@@ -276,9 +273,6 @@ class UserResource(ks_flask.ResourceBase):
         )
         PROVIDERS.identity_api.delete_user(user_id)
         return None, http.client.NO_CONTENT
-
-
-notifier.set(UserResource.get)
 
 
 class UserChangePasswordResource(ks_flask.ResourceBase):

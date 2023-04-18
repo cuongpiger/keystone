@@ -13,6 +13,7 @@
 import collections
 import os
 
+import flask
 from oslo_log import log
 import stevedore
 
@@ -53,7 +54,7 @@ _APP_MIDDLEWARE = (
                 conf={}),
     _Middleware(namespace='keystone.server_middleware',
                 ep='osprofiler',
-                conf={}),
+                conf=CONF.profiler or {}),
     _Middleware(namespace='keystone.server_middleware',
                 ep='request_id',
                 conf={}),
@@ -89,7 +90,7 @@ def _get_config_files(env=None):
     return files
 
 
-def setup_app_middleware(app):
+def setup_app_middleware(app: flask.Flask):
     # NOTE(morgan): Load the middleware, in reverse order, we wrap the app
     # explicitly; reverse order to ensure the first element in _APP_MIDDLEWARE
     # processes the request first.
@@ -109,7 +110,6 @@ def setup_app_middleware(app):
     # Apply internal-only Middleware (e.g. AuthContextMiddleware). These
     # are below all externally loaded middleware in request processing.
     for mw in reversed(IMW):
-        print("middleware is: ", mw)
         app.wsgi_app = mw(app.wsgi_app)
 
     # Apply the middleware to the application.
@@ -166,8 +166,8 @@ def initialize_application(name, post_log_configured_function=lambda: None,
 
     # TODO(morgan): Provide a better mechanism than "loadapp", this was for
     # paste-deploy specific mechanisms.
-    def loadapp():
-        app = application.application_factory(name)
+    def loadapp() -> flask.Flask:
+        app: flask.Flask = application.application_factory(name)
         return app
 
     _unused, app = keystone.server.setup_backends(

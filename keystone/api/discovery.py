@@ -67,7 +67,6 @@ def get_versions():
                               mimetype=MimeTypes.JSON_HOME)
     else:
         identity_url = '%s/' % ks_flask.base_url()
-        print(f"AT HEREEEEEEEEEEEEEEEEEEEEEEE, {identity_url}")
         versions = _get_versions_list(identity_url)
         # Set the preferred version to the latest "stable" version.
         # TODO(morgan): If we ever have more API versions find the latest
@@ -82,7 +81,6 @@ def get_versions():
             mimetype=MimeTypes.JSON,
             status=http.client.MULTIPLE_CHOICES)
         response.headers['Location'] = preferred_location
-        print(f"AT HEREEEEEEEEEEEEEEEEEEEEEEE 2, {response}")
         return response
 
 
