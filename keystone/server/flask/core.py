@@ -167,8 +167,8 @@ def initialize_application(name, post_log_configured_function=lambda: None,
     # TODO(morgan): Provide a better mechanism than "loadapp", this was for
     # paste-deploy specific mechanisms.
     def loadapp() -> flask.Flask:
-        app: flask.Flask = application.application_factory(name)
-        return app
+        flask_app: flask.Flask = application.application_factory(name)
+        return flask_app
 
     _unused, app = keystone.server.setup_backends(
         startup_application_fn=loadapp)
