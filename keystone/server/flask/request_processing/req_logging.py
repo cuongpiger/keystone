@@ -16,7 +16,6 @@
 import flask
 from oslo_log import log
 
-
 LOG = log.getLogger(__name__)
 
 
@@ -24,6 +23,5 @@ def log_request_info():
     # Add in any extra debug logging about the request that is desired
     # note that this is executed prior to routing the request to a resource
     # so the data is somewhat raw.
-    LOG.debug('REQUEST_METHOD: `%s`', flask.request.method)
-    LOG.debug('SCRIPT_NAME: `%s`', flask.request.script_root)
-    LOG.debug('PATH_INFO: `%s`', flask.request.path)
+    LOG.debug(
+        f'REQUEST_METHOD: `{flask.request.method}`, PATH_INFO: `{flask.request.path}`, SCRIPT_NAME: `{flask.request.script_root}`')

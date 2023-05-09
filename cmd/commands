@@ -1,17 +1,94 @@
 #!/bin/bash
 
 local filename=$0
+REGION_NAME=RegionOne
+ADMIN_PASSWORD=secret
+PROJECT_NAME=admin
+USERNAME=admin
+KEYSTONE_SERVICE_URI="http://0.0.0.0:5000"
 
-function fernet_setup {
-  local funcname=$filename.fernet_setup
+function _check_keystone {
+  local funcname=$filename.check_keystone
   if command -v pip >/dev/null 2>&1; then
     if pip freeze | grep -q keystone; then
-      keystone-manage --config-dir /etc/keystone fernet_setup
-      echo "[INFO][$funcname:$LINENO] --- Fernet keys have been generated"
+      return 0
     else
       echo "[ERROR][$funcname:$LINENO] --- keystone-manage has not been installed, using pip install -e <keystone_directory> to install first."
     fi
   else
     echo "[ERROR][$funcname:$LINENO] --- pip is not installed, please install pip and then try again."
+  fi
+
+  return 1
+}
+
+function keystone_db_sync() {
+  local funcname=$filename.keystone_db_sync
+  if _check_keystone; then
+    keystone-manage --config-dir /etc/keystone db_sync
+    echo "[INFO][$funcname:$LINENO] --- Keystone database has been synced"
+  fi
+}
+
+function keystone_fernet_setup {
+  local funcname=$filename.keystone_fernet_setup
+  if _check_keystone; then
+    keystone-manage --config-dir /etc/keystone fernet_setup
+    echo "[INFO][$funcname:$LINENO] --- Fernet keys have been generated"
+  fi
+}
+
+function keystone_credential_setup {
+  local funcname=$filename.keystone_credential_setup
+  if _check_keystone; then
+    keystone-manage --config-dir /etc/keystone credential_setup
+    echo "[INFO][$funcname:$LINENO] --- Credential keys have been generated"
+  fi
+}
+
+function keystone_bootstrap_servers {
+  local funcname=$filename.keystone_bootstrap_servers
+  if _check_keystone; then
+    keystone-manage --config-dir /etc/keystone bootstrap \
+      --bootstrap-username $USERNAME \
+      --bootstrap-password $ADMIN_PASSWORD \
+      --bootstrap-project-name $PROJECT_NAME \
+      --bootstrap-role-name admin \
+      --bootstrap-service-name keystone \
+      --bootstrap-region-id $REGION_NAME \
+      --bootstrap-public-url $KEYSTONE_SERVICE_URI
+    echo "[INFO][$funcname:$LINENO] --- Keystone has been bootstrapped"
+  fi
+}
+
+function keystone_reinstall {
+  local funcname=$filename.keystone_reinstall
+  if command -v pip >/dev/null 2>&1; then
+    if pip freeze | grep -q keystone; then
+      pip uninstall -y keystone
+      pip install -e .
+      echo "[INFO][$funcname:$LINENO] --- Keystone has been reinstalled"
+    fi
+  fi
+}
+
+function keystone_run_local {
+  python app.py
+}
+
+function keystone_set_openstack_cli {
+  local funcname=$filename.keystone_set_openstack_cli
+  if command -v openstack >/dev/null 2>&1; then
+    openstack endpoint create --region "$REGION_NAME" \
+      --os-username $USERNAME \
+      --os-user-domain-id default \
+      --os-password "$ADMIN_PASSWORD" \
+      --os-project-name $PROJECT_NAME \
+      --os-project-domain-id default \
+      --os-auth-url "$KEYSTONE_SERVICE_URI" \
+      keystone admin "$KEYSTONE_SERVICE_URI"
+    echo "[INFO][$funcname:$LINENO] --- OpenStack CLI has been set for Keystone"
+  else
+    echo "[ERROR][$funcname:$LINENO] --- OpenStack CLI is not installed, please install it and then try again."
   fi
 }
