@@ -35,7 +35,8 @@ Author: Cuong. Duong Manh
 * Clone this repo.
 * Go to the root directory of this repo.
 * Run the fernet command
-* Run `app.py` file.
 * Using `pip install -e .`
 * Run the db_sync, fernet_setup and bootstrap_servers inside cmd directory.
-* 
+* Run app.py
+* `export OS_CLOUD=devstack-admin`
+* `openstack project show "admin" -f value -c id`, check
