@@ -10,3 +10,7 @@ keystone-bootstrap-all:
 source_cmd:
 	cat $(PWD)/cmd/commands
 	@bash $(PWD)/cmd/commands
+
+
+run:
+	@uwsgi --procname-prefix keystone --ini /etc/keystone/keystone-uwsgi-public.ini
