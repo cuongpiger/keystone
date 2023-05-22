@@ -270,7 +270,6 @@ class AuthTokenOSPKIResource(flask_restful.Resource):
 
 class AuthTokenResource(_AuthFederationWebSSOBase):
     def get(self):
-        print("❤️ get token resource")
         """Validate a token.
 
         HEAD/GET /v3/auth/tokens

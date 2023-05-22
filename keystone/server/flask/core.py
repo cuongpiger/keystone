@@ -12,6 +12,7 @@
 
 import collections
 import os
+import osprofiler
 
 import flask
 from oslo_log import log
@@ -37,7 +38,6 @@ from keystone.server.flask.request_processing.middleware import url_normalize
 #   * "conf": extra config data for the entry_point (None or Dict)
 _Middleware = collections.namedtuple('LoadableMiddleware',
                                      'namespace, ep, conf')
-
 
 CONF = keystone.conf.CONF
 # NOTE(morgan): ORDER HERE IS IMPORTANT! The middleware will process the
@@ -75,7 +75,6 @@ _KEYSTONE_MIDDLEWARE = (
 def _get_config_files(env=None):
     if env is None:
         env = os.environ
-
 
     dirname = env.get('OS_KEYSTONE_CONFIG_DIR', '').strip()
 
@@ -142,11 +141,11 @@ def setup_app_middleware(app: flask.Flask):
 def initialize_application(name, post_log_configured_function=lambda: None,
                            config_files=None):
     possible_topdir = os.path.normpath(os.path.join(
-                                       os.path.abspath(__file__),
-                                       os.pardir,
-                                       os.pardir,
-                                       os.pardir,
-                                       os.pardir))
+        os.path.abspath(__file__),
+        os.pardir,
+        os.pardir,
+        os.pardir,
+        os.pardir))
 
     dev_conf = os.path.join(possible_topdir,
                             'etc',
